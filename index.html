@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        #wheel {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 100px;
+            top: calc(70% - 50px);
+        }
+
+        .point {
+            height: 10px;
+            width: 10px;
+            border: 3px solid red;
+            border-radius: 100%;
+        }
+
+        hr {
+            position: absolute;
+            top: 70%;
+            width: 100%;
+            height: 5px;
+            border: none;
+            background-color: gray;
+            margin: 0;
+        }
+
+        #container {
+            border: 3px solid darkslategray;
+            background-color: lightgrey;
+            position: absolute;
+            top: 75%;
+            width: 90%;
+            margin-left: 5%;
+            max-height: 20%;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <img id="wheel" src="wheel.png" alt="">
+    <div id="pA" class="point"></div>
+    <hr id="floor">
+    <div id="container">
+        <label for="vol">Speed </label>
+        <input type="range" id="speed" name="speed" min="0" max="20" value="0">
+        <br><br>
+        <label for="radius">Diameter </label>
+        <input type="range" id="radius" name="radius" min="10" max="200" value="100">
+    </div>
+</body>
+
+<script>
+    const speed_slider = document.getElementById("speed");
+    const radius_slider = document.getElementById("radius");
+    const wheel = document.getElementById("wheel");
+
+    let x = window.innerWidth/2;
+    let spd = parseInt(speed_slider.value);
+    let direction = 1;
+    let r = parseInt(radius_slider.value);
+    let ang_spd = spd/r;
+    let ang = 0;
+
+    let max_x = window.innerWidth-r;
+    let min_x = r;
+
+    function updateWheel(){
+        wheel.style.height = `${r}px`;
+        wheel.style.width = `${r}px`;
+        wheel.style.top = `calc(70% - ${r/2}px)`;
+    }
+
+    function updateVars(){
+        ang_spd = spd/r;
+        max_x = window.innerWidth-r;
+        min_x = r;
+    }
+
+    speed_slider.addEventListener('input', function(){
+        spd = parseInt(this.value);
+        updateVars();
+    });
+    radius_slider.addEventListener('input', function(){
+        r = parseInt(this.value);
+        updateWheel();
+        updateVars();
+    });
+
+    function motion(){
+        x+= spd*direction;
+        ang += ang_spd*direction;
+        wheel.style.left = `${x}px`;
+        wheel.style.transform = `translate(-50%, -50%) rotate(${ang}rad)`;
+
+        if(x >= max_x || x <= min_x){
+            direction *= -1;
+        }
+
+        requestAnimationFrame(motion);
+    }
+
+    motion();
+</script>
+</html>
